@@ -140,7 +140,8 @@ class FakeStrict(FakeClass, object):
         "interact": True,
         "who": None,
         "with_": None,
-        "parent": None
+        "parent": None,
+        "language": None
     }
 
     _replace_names = {

@@ -65,9 +65,27 @@ SPECIAL_CLASSES.append(oldfrozenset)
 
 @SPECIAL_CLASSES.append
 class PyExpr(magic.FakeStrict, str):
+    __module__ = "renpy.astsupport"  # New module naming in last Ren'Py versions
+
+    def __new__(cls, s, filename, linenumber, py=None, hashcode=None, column=0):
+        self = str.__new__(cls, s)
+        self.filename = filename
+        self.linenumber = linenumber
+        self.py = py
+        return self
+
+    def __getnewargs__(self):
+        if self.py is not None:
+            return str(self), self.filename, self.linenumber, self.py
+        else:
+            return str(self), self.filename, self.linenumber
+
+
+@SPECIAL_CLASSES.append
+class PyExpr(magic.FakeStrict, str):
     __module__ = "renpy.ast"
 
-    def __new__(cls, s, filename, linenumber, py=None):
+    def __new__(cls, s, filename, linenumber, py=None, hashcode=None, column=0):
         self = str.__new__(cls, s)
         self.filename = filename
         self.linenumber = linenumber
@@ -86,11 +104,25 @@ class PyCode(magic.FakeStrict):
     __module__ = "renpy.ast"
 
     def __setstate__(self, state):
+
         if len(state) == 4:
             (_, self.source, self.location, self.mode) = state
             self.py = None
-        else:
+            self.hashcode = None
+            self.col_offset = 0
+
+        elif len(state) == 5:
             (_, self.source, self.location, self.mode, self.py) = state
+            self.hashcode = None
+            self.col_offset = 0
+
+        elif len(state) == 6:
+            (_, self.source, self.location, self.mode, self.py, self.hashcode) = state
+            self.col_offset = 0
+
+        else:
+            (_, self.source, self.location, self.mode, self.py, self.hashcode, self.col_offset) = state
+
         self.bytecode = None
 
 

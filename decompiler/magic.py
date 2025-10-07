@@ -131,6 +131,22 @@ A barebones instance of :class:`FakeClassType`. Inherit from this to create fake
 """}, module=__name__)
 
 class FakeStrict(FakeClass, object):
+
+    _default_values = {
+        "hide": False,  # ast.hide
+        "expression": None,  # ast.expression
+        "parameters": None,  # ast.parameters
+        "atl": None,  # ast.atl
+        "interact": True,  # ast.interact
+        "who": None,  # ast.who
+        "with_": None  # ast.who
+    }
+
+    _replace_names = {
+        "name": "_name"
+    }
+
+
     def __new__(cls, *args, **kwargs):
         self = FakeClass.__new__(cls)
         if args or kwargs:
@@ -154,6 +170,24 @@ class FakeStrict(FakeClass, object):
 
         if slotstate:
             self.__dict__.update(slotstate)
+
+    def __getattr__(self, attr):
+
+        _attr = None
+        if attr in self._replace_names:
+            _attr = self._replace_names[attr]
+            if hasattr(self, _attr):
+                return getattr(self, _attr)
+
+        if attr in self._default_values:
+            return self._default_values[attr]
+
+        if _attr and (_attr in self._default_values):
+            return self._default_values[_attr]
+
+        ex_value = ((attr, _attr) if _attr else attr)
+        raise AttributeError(ex_value)
+
 
 class FakeWarning(FakeClass, object):
     def __new__(cls, *args, **kwargs):

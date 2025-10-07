@@ -133,13 +133,14 @@ A barebones instance of :class:`FakeClassType`. Inherit from this to create fake
 class FakeStrict(FakeClass, object):
 
     _default_values = {
-        "hide": False,  # ast.hide
-        "expression": None,  # ast.expression
-        "parameters": None,  # ast.parameters
-        "atl": None,  # ast.atl
-        "interact": True,  # ast.interact
-        "who": None,  # ast.who
-        "with_": None  # ast.who
+        "hide": False,
+        "expression": None,
+        "parameters": None,
+        "atl": None,
+        "interact": True,
+        "who": None,
+        "with_": None,
+        "parent": None
     }
 
     _replace_names = {

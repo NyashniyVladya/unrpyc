@@ -133,20 +133,230 @@ A barebones instance of :class:`FakeClassType`. Inherit from this to create fake
 class FakeStrict(FakeClass, object):
 
     _default_values = {
-        "hide": False,
-        "expression": None,
-        "parameters": None,
-        "atl": None,
-        "interact": True,
-        "who": None,
-        "with_": None,
-        "parent": None,
-        "language": None,
-        "store": "store"
-    }
-
-    _replace_names = {
-        "name": "_name"
+        "PyCode": {
+            "filename": None,
+            "source": None,
+            "location": None,
+            "mode": "eval",
+            "bytecode": None,
+            "py": 3,
+            "hashcode": 0,
+            "_cslot_linenumbers": True
+        },
+        "Scry": {
+            "_next": None,
+            "interacts": False,
+            "say": False,
+            "menu_with_caption": False,
+            "who": None,
+            "extend_text": None,
+            "multiple": None
+        },
+        "Node": {
+            "filename": None,
+            "_name": None,
+            "name_version": 0,
+            "name_serial": 0,
+            "next": None,
+            "translatable": False,
+            "translation_relevant": False,
+            "rollback": "normal",
+            "warp": False,
+            "_cslot_linenumbers": True
+        },
+        "Say": {
+            "who": None,
+            "who_fast": None,
+            "what": None,
+            "with_": None,
+            "interact": True,
+            "attributes": None,
+            "arguments": None,
+            "temporary_attributes": None,
+            "rollback": "normal",
+            "identifier": None,
+            "explicit_identifier": False
+        },
+        "Init": {
+            "block": None,
+            "priority": None
+        },
+        "Label": {
+            "block": None,
+            "parameters": None,
+            "hide": False,
+            "translation_relevant": True
+        },
+        "Python": {
+            "code": None,
+            "store": "store",
+            "hide": False
+        },
+        "EarlyPython": {
+            "code": None,
+            "store": "store",
+            "hide": False
+        },
+        "Image": {
+            "imgname": None,
+            "code": None,
+            "atl": None
+        },
+        "Transform": {
+            "varname": None,
+            "atl": None,
+            "parameters": None,
+            "store": "store",
+            "default_parameters": {}
+        },
+        "Show": {
+            "imspec": None,
+            "atl": None,
+            "warp": True
+        },
+        "ShowLayer": {
+            "at_list": None,
+            "atl": None,
+            "layer": "master",
+            "warp": True
+        },
+        "Camera": {
+            "at_list": None,
+            "atl": None,
+            "layer": "master",
+            "warp": True
+        },
+        "Scene": {
+            "imspec": None,
+            "atl": None,
+            "layer": "master",
+            "warp": True
+        },
+        "Hide": {
+            "imspec": None,
+            "warp": True
+        },
+        "With": {
+            "expr": None,
+            "paired": None
+        },
+        "Call": {
+            "label": None,
+            "arguments": None,
+            "expression": False,
+            "global_label": ""
+        },
+        "Return": {
+            "expression": None
+        },
+        "Menu": {
+            "items": None,
+            "statement_start": None,
+            "set": None,
+            "with_": None,
+            "has_caption": False,
+            "arguments": None,
+            "item_arguments": None,
+            "rollback": "force",
+            "translation_relevant": True
+        },
+        "Jump": {
+            "target": None,
+            "expression": False,
+            "global_label": ""
+        },
+        "Pass": {},
+        "While": {
+            "condition": None,
+            "block": None
+        },
+        "If": {
+            "entries": None
+        },
+        "UserStatement": {
+            "line": None,
+            "parsed": None,
+            "block": [],
+            "translatable": False,
+            "code_block": None,
+            "translation_relevant": False,
+            "rollback": "normal",
+            "subparses": [],
+            "atl": None,
+            "init_priority": None,
+            "init_offset": None
+        },
+        "PostUserStatement": {
+            "parent": None
+        },
+        "Define": {
+            "varname": None,
+            "code": None,
+            "store": "store",
+            "operator": "=",
+            "index": None
+        },
+        "Default": {
+            "varname": None,
+            "code": None,
+            "store": "store"
+        },
+        "Screen": {
+            "screen": None
+        },
+        "Style": {
+            "style_name": None,
+            "parent": None,
+            "properties": None,
+            "clear": None,
+            "take": None,
+            "delattr": None,
+            "variant": None
+        },
+        "Testcase": {
+            "label": None,
+            "test": None
+        },
+        "RPY": {
+            "rest": None
+        },
+        "Translate": {
+            "identifier": None,
+            "alternate": None,
+            "language": None,
+            "block": None,
+            "after": None,
+            "rollback": "never",
+            "translation_relevant": True
+        },
+        "TranslateSay": {
+            "alternate": None,
+            "language": None,
+            "translatable": True,
+            "translation_relevant": True,
+            "block": []
+        },
+        "EndTranslate": {
+            "rollback": "never"
+        },
+        "TranslateString": {
+            "language": None,
+            "old": None,
+            "new": None,
+            "newloc": None,
+            "translation_relevant": True
+        },
+        "TranslatePython": {
+            "language": None,
+            "code": None,
+            "translation_relevant": True
+        },
+        "TranslateBlock": {
+            "block": None,
+            "language": None,
+            "translation_relevant": True
+        },
+        "TranslateEarlyBlock": {}
     }
 
 
@@ -174,22 +384,33 @@ class FakeStrict(FakeClass, object):
         if slotstate:
             self.__dict__.update(slotstate)
 
+    def _get_replace_mapping(self):
+        if self.__class__.__name__ in self._default_values:
+            return self._default_values[self.__class__.__name__]
+        return {}
+
     def __getattr__(self, attr):
 
-        _attr = None
-        if attr in self._replace_names:
-            _attr = self._replace_names[attr]
-            if hasattr(self, _attr):
-                return getattr(self, _attr)
+        _replace_mapping = self._get_replace_mapping()
+        if attr in _replace_mapping:
+            return _replace_mapping[attr]
 
-        if attr in self._default_values:
-            return self._default_values[attr]
+        if attr == "statement_start":
+            return self
 
-        if _attr and (_attr in self._default_values):
-            return self._default_values[_attr]
+        if attr == "name":
+            attr = "_name"
 
-        ex_value = ((attr, _attr) if _attr else attr)
-        raise AttributeError(ex_value)
+        elif attr == "with":
+            attr = "with_"
+
+        elif attr == "after":
+            attr = "next"
+
+        if attr in _replace_mapping:
+            return _replace_mapping[attr]
+
+        raise AttributeError((self.__class__.__name__, attr))
 
 
 class FakeWarning(FakeClass, object):

@@ -356,7 +356,14 @@ class FakeStrict(FakeClass, object):
             "language": None,
             "translation_relevant": True
         },
-        "TranslateEarlyBlock": {}
+        "TranslateEarlyBlock": {},
+        "ArgumentInfo": {
+            "arguments": None,
+            "extrapos": None,
+            "extrakw": None,
+            "starred_indexes": None,
+            "doublestarred_indexes": None
+        }
     }
 
 
@@ -413,7 +420,9 @@ class FakeStrict(FakeClass, object):
         if attr in _replace_mapping:
             return _replace_mapping[attr]
 
-        raise AttributeError((self.__class__.__name__, attr))
+        raise AttributeError(
+            "{0} not contain \"{1}\" arg".format(self.__class__.__name__, attr)
+        )
 
 
 class FakeWarning(FakeClass, object):

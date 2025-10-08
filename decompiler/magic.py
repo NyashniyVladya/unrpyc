@@ -407,6 +407,9 @@ class FakeStrict(FakeClass, object):
         elif attr == "after":
             attr = "next"
 
+        if hasattr(self, attr):
+            return getattr(self, attr)
+
         if attr in _replace_mapping:
             return _replace_mapping[attr]
 
